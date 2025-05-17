@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Ürün Yönetimi - Freaky Gaming Shop</title>
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <style>
+        .product-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .product-card:hover {
+            background-color: #f8f9fa;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .action-buttons button {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Initialize products in localStorage -->
+    <script>
+        // Check if user is logged in and has admin role
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const role = localStorage.getItem('role');
+        const username = localStorage.getItem('username');
+        const adminNameElement = document.getElementById('adminName');
+
+        if (!isLoggedIn || role !== 'admin') {
+            alert('Bu sayfaya erişim için yönetici olduğunuzdan emin olun!');
+            window.location.href = 'index.html';
+        }
+
+        adminNameElement.textContent = username;
+
+        // Check if products exist in localStorage, if not add initial products
+        if (!localStorage.getItem('products')) {
+            const initialProducts = [
+                {
+                    id: '1',
+                    name: 'Devil May Cry 5 Steam Key',
+                    price: '400',
+                    image: 'devil may cry5.jfif'
+                },
+                {
+                    id: '2',
+                    name: 'Cyberpunk 2077',
+                    price: '350',
+                    image: 'https://dummyimage.com/450x300/dee2e6/6c757d.jpg'
+                }
+            ];
+            localStorage.setItem('products', JSON.stringify(initialProducts));
+        }
+
+        // Function to generate new product ID
+        function generateProductId() {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const lastProduct = products[products.length - 1];
+            return lastProduct ? (parseInt(lastProduct.id) + 1).toString() : '1';
+        }
+    </script>
+
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="index.html">Freaky Gaming Shop</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Anasayfa</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Product Management Section-->
+    <section class="py-5">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <i class="fas fa-gamepad me-2"></i>Freaky Gaming Shop
+                </a>
+                <div class="d-flex align-items-center ms-auto">
+                    <span class="me-3">Hoş geldiniz, <strong id="adminName"></strong></span>
+                    <button class="btn btn-outline-dark me-2" id="themeToggle">
+                        <i class="bi bi-brightness-high"></i> Light Mode
+                    </button>
+                    <a href="giriş.html" class="btn btn-outline-dark" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt me-1"></i>Çıkış
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container px-4 px-lg-5">
+            <div class="row">
+                <!-- Add Product Form -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Yeni Ürün Ekle</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="addProductForm">
+                                <div class="mb-3">
+                                    <label for="productName" class="form-label">Ürün Adı</label>
+                                    <input type="text" class="form-control" id="productName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="productPrice" class="form-label">Fiyat (₺)</label>
+                                    <input type="number" class="form-control" id="productPrice" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="productImage" class="form-label">Resim URL</label>
+                                    <input type="url" class="form-control" id="productImage" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Ürünü Ekle</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product List -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Eklenen Ürünler</h5>
+                        </div>
+                        <div class="card-body" id="productList">
+                            <!-- Products will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Load products from localStorage
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+
+        // Function to save products to localStorage
+        function saveProducts() {
+            localStorage.setItem('products', JSON.stringify(products));
+        }
+
+        // Function to update market page
+        function updateMarketPage() {
+            // Get market page if it exists
+            const marketPage = window.open('index.html', '_blank');
+            if (marketPage) {
+                // Force reload of market page
+                marketPage.location.reload();
+            }
+        }
+
+        // Function to update product list display
+        function updateProductList() {
+            const productList = document.getElementById('productList');
+            productList.innerHTML = '';
+
+            products.forEach((product, index) => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" style="width: 100%; height: 200px; object-fit: cover;">
+                    <h5>${product.name}</h5>
+                    <p>₺${product.price}</p>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="editProduct(${index})">Düzenle</button>
+                        <button class="btn btn-danger" onclick="deleteProduct(${index})">Sil</button>
+                    </div>
+                `;
+                productList.appendChild(productCard);
+            });
+        }
+
+        // Add event listener to form
+        document.getElementById('addProductForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newProduct = {
+                id: generateProductId(),
+                name: document.getElementById('productName').value,
+                price: document.getElementById('productPrice').value,
+                image: document.getElementById('productImage').value
+            };
+            
+            products.push(newProduct);
+            saveProducts();
+            updateMarketPage();
+            updateProductList();
+            this.reset();
+        });
+
+        // Edit product
+        function editProduct(index) {
+            const product = products[index];
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productPrice').value = product.price;
+            document.getElementById('productImage').value = product.image;
+
+            // Remove old product and update list
+            products.splice(index, 1);
+            saveProducts();
+            updateProductList();
+        }
+
+        // Delete product
+        function deleteProduct(index) {
+            if (confirm('Bu ürünü silmek istediğinizden emin misiniz?')) {
+                products.splice(index, 1);
+                saveProducts();
+                updateProductList();
+            }
+        }
+
+        // Initialize product list
+        updateProductList();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            if (!localStorage.getItem('isLoggedIn')) {
+                window.location.href = 'giriş.html';
+                return;
+            }
+
+            // Set admin name in navbar
+            const adminName = localStorage.getItem('adminUsername');
+            document.getElementById('adminName').textContent = adminName;
+
+            // Logout functionality
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('adminUsername');
+                window.location.href = 'giriş.html';
+            });
+        });
+    </script>
+
+    <!-- Footer-->
+    <footer class="bg-dark text-white mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5 class="mb-4">Freaky Gaming Shop</h5>
+                    <p class="text-muted">En iyi oyun deneyimini sunan ve en son teknoloji ile geliştirilmiş oyunlar.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="mb-4">Hızlı Linkler</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Ana Sayfa</a></li>
+                        <li><a href="hesaplar.html" class="text-white text-decoration-none">Kullanıcı Hesapları</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">İletişim</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Hakkımızda</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="mb-4">Bizi Takip Edin</h5>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-4 mb-3">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0">&copy; Freaky Gaming Shop 2023. Tüm hakları saklıdır.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        footer {
+            background-color: #343a40;
+        }
+        footer h5 {
+            color: #fff;
+            font-weight: 600;
+        }
+        footer ul {
+            list-style: none;
+            padding: 0;
+        }
+        footer a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: #fff;
+        }
+        .social-links a {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        .social-links a:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+
+</body>
+</html>

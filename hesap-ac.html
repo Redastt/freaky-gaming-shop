@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hesap Aç - Freaky Gaming Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .register-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .register-container h1 {
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 2rem;
+        }
+        .form-control:focus {
+            border-color: #343a40;
+            box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.25);
+        }
+        .btn-primary {
+            background-color: #343a40;
+            border-color: #343a40;
+        }
+        .btn-primary:hover {
+            background-color: #2a3036;
+            border-color: #2a3036;
+        }
+        .form-check-label {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="register-container">
+            <h1>Hesap Oluştur</h1>
+            <form id="accountForm">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Adınız</label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-posta Adresi</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Kullanıcı Adı</label>
+                    <input type="text" class="form-control" id="username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Şifre</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Şifre Tekrar</label>
+                    <input type="password" class="form-control" id="confirmPassword" required>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="terms">
+                        <label class="form-check-label" for="terms">
+                            Site şartlarını okudum ve kabul ediyorum
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Hesap Oluştur</button>
+            </form>
+            <div id="registerError" class="alert alert-danger mt-3 d-none">
+                Lütfen tüm alanları doğru doldurun!
+            </div>
+            <div class="text-center mt-3">
+                <p class="mb-0">Zaten hesabınız var mı? <a href="giriş.html" class="text-primary">Giriş yapın</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Form submit event listener
+        document.getElementById('accountForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const email = document.getElementById('email').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const terms = document.getElementById('terms').checked;
+            const errorDiv = document.getElementById('registerError');
+
+            // Clear previous error
+            errorDiv.classList.add('d-none');
+            errorDiv.textContent = '';
+
+            // Validate form
+            if (!terms) {
+                errorDiv.classList.remove('d-none');
+                errorDiv.textContent = 'Lütfen site şartlarını kabul edin!';
+                return;
+            }
+            if (password !== confirmPassword) {
+                errorDiv.classList.remove('d-none');
+                errorDiv.textContent = 'Şifreler eşleşmiyor!';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/accounts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password, email })
+                });
+
+                const data = await response.json();
+                console.log('Response:', data);
+
+                if (data.error) {
+                    errorDiv.classList.remove('d-none');
+                    errorDiv.textContent = data.error;
+                } else if (data.success) {
+                    // Redirect to login page
+                    window.location.href = 'giriş.html';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorDiv.classList.remove('d-none');
+                errorDiv.textContent = 'Bir hata oluştu: ' + error.message;
+            }
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</body>
+</html>

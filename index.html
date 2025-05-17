@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Freaky Shop</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <style>
+            .card-img-top {
+                transition: transform 0.3s ease;
+                width: 100%;
+                height: auto;
+            }
+            .card:hover .card-img-top {
+                transform: scale(1.1);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="#!">Freaky Gaming Shop</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Anasayfa</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#!">Hakkımızda</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Mağaza</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#!">Tüm Ürünler</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" href="#!">Popüler Eşyalar</a></li>
+                                <li><a class="dropdown-item" href="#!">Yeni Eşyalar</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="ürün-paneli.html">Ürün Yönetimi</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        <div class="dropdown me-3">
+                            <button class="btn btn-link text-dark dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="https://www.pngall.com/wp-content/uploads/5/Profile-PNG-File.png" class="rounded-circle me-2" alt="Profile" width="40" height="40">
+                                <span class="d-none d-md-inline">Hoş geldiniz, <strong id="userName"></strong></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="ürün-paneli.html"><i class="fas fa-cog me-2"></i>Ürün Yönetimi</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="giriş.html"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
+                            </ul>
+                        </div>
+                        <form class="d-flex">
+                            <button class="btn btn-outline-dark" type="button" onclick="window.location.href='sepet.html'">
+                                <i class="bi-cart-fill me-1"></i>
+                                Sepet
+                                <span class="badge bg-dark text-white ms-1 rounded-pill" id="cartCount">0</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">Freaky Gaming Shop</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">Buradan İstediğiniz Oyunu Alabilirsiniz</p>
+                </div>
+            </div>
+        </header>
+        <!-- Section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center" id="productList">
+                    <!-- Products will be loaded dynamically from localStorage -->
+                    <div id="loading-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;">
+                        Ürünler yükleniyor...
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <style>
+            @keyframes loadingDots {
+                0% { content: ''; }
+                25% { content: '.'; }
+                50% { content: '..'; }
+                75% { content: '...'; }
+                100% { content: ''; }
+            }
+            
+            .loading-text::after {
+                content: '';
+                display: inline-block;
+                animation: loadingDots 1.5s infinite;
+            }
+        </style>
+        
+        <div id="loading-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;">
+            <div class="loading-text">Ürün resimleri yükleniyor</div>
+        </div>
+        
+        <!-- Footer-->
+        <footer class="bg-dark text-white mt-5 py-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5 class="mb-4">Freaky Gaming Shop</h5>
+                        <p class="text-muted">En iyi oyun deneyimini sunan ve en son teknoloji ile geliştirilmiş oyunlar.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="mb-4">Hızlı Linkler</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="index.html" class="text-white text-decoration-none">Ana Sayfa</a></li>
+                            <li><a href="giriş.html" class="btn btn-outline-dark me-2">Ürün Yönetimi</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">İletişim</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">Hakkımızda</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="mb-4">Bizi Takip Edin</h5>
+                        <div class="social-links">
+                            <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="text-white"><i class="fab fa-youtube"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mt-4 mb-3">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <p class="mb-0">&copy; Freaky Gaming Shop 2023. Tüm hakları saklıdır.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <style>
+            footer {
+                background-color: #343a40;
+            }
+            footer h5 {
+                color: #fff;
+                font-weight: 600;
+            }
+            footer ul {
+                list-style: none;
+                padding: 0;
+            }
+            footer a {
+                color: #adb5bd;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+            footer a:hover {
+                color: #fff;
+            }
+            .social-links a {
+                font-size: 1.5rem;
+                transition: transform 0.3s ease;
+            }
+            .social-links a:hover {
+                transform: translateY(-3px);
+            }
+        </style>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+        <script>
+            // Function to load products from localStorage
+            function loadProducts() {
+                const products = JSON.parse(localStorage.getItem('products')) || [];
+                const productList = document.getElementById('productList');
+                productList.innerHTML = '';
+
+                products.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'col mb-5';
+                    productCard.setAttribute('data-product-id', product.id);
+                    productCard.innerHTML = `
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="${product.image}" alt="${product.name}" />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">${product.name}</h5>
+                                    <!-- Product price-->
+                                    <p class="price-tag">${product.price} ₺</p>
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a class="btn btn-outline-dark" href="eşya görüntüleme.html?id=${product.id}">Detaylar</a>
+                                    <button class="btn btn-primary" data-product-id="${product.id}">
+                    `;
+                    productCard.innerHTML = `
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="${product.image}" alt="${product.name}" />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">${product.name}</h5>
+                                    <!-- Product price-->
+                                    <p class="price-tag">${product.price} ₺</p>
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a class="btn btn-outline-dark" href="eşya görüntüleme.html?id=${product.id}">Detaylar</a>
+                                    <button class="btn btn-primary" onclick="addToCart('${product.id}')">
+                                        <i class="fas fa-cart-plus me-1"></i>Sepete Ekle
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    productList.appendChild(productCard);
+                });
+            }
+
+            // Cart functions
+            function addToCart(productId) {
+                try {
+                    // Get products from localStorage
+                    const products = JSON.parse(localStorage.getItem('products')) || [];
+                    const product = products.find(p => p.id === productId);
+
+                    if (!product) {
+                        throw new Error('Ürün bulunamadı!');
+                    }
+
+                    // Get cart from localStorage
+                    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+                    // Check if item already exists in cart
+                    const existingItem = cart.find(item => item.id === productId);
+                    if (existingItem) {
+                        existingItem.quantity += 1;
+                    } else {
+                        cart.push({
+                            id: productId,
+                            name: product.name,
+                            price: product.price,
+                            image: product.image,
+                            quantity: 1
+                        });
+                    }
+
+                    // Save cart to localStorage
+                    localStorage.setItem('cart', JSON.stringify(cart));
+
+                    // Update cart count
+                    updateCartCount();
+
+                    // Show success message
+                    alert('Ürün başarıyla sepete eklendi!');
+                } catch (error) {
+                    console.error('Sepete ekleme hatası:', error);
+                    alert('Bir hata oluştu: ' + error.message);
+                }
+            }
+
+            function updateCartCount() {
+                try {
+                    const cartCount = document.getElementById('cartCount');
+                    if (!cartCount) return;
+                    
+                    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    const count = cart.reduce((total, item) => total + item.quantity, 0);
+                    cartCount.textContent = count;
+                } catch (error) {
+                    console.error('Sepet sayısı güncelleme hatası:', error);
+                }
+            }
+
+            // Load products when page loads
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialize cart
+                updateCartCount();
+                
+                // Load products
+                loadProducts();
+
+                // Add event listeners to add to cart buttons
+                setTimeout(() => {
+                    const buttons = document.querySelectorAll('.btn-primary');
+                    if (buttons) {
+                        buttons.forEach(button => {
+                            button.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                const productId = this.closest('.card').dataset.productId;
+                                if (productId) {
+                                    addToCart(productId);
+                                }
+                            });
+                        });
+                    }
+                }, 1000);
+
+                // Theme toggle functionality
+                const themeToggle = document.getElementById('themeToggle');
+                const body = document.body;
+                
+                // Check for saved theme preference
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                body.classList.add(savedTheme + '-mode');
+                
+                themeToggle.addEventListener('click', function() {
+                    const currentTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    
+                    // Remove old theme class, add new theme class
+                    body.classList.remove(currentTheme + '-mode');
+                    body.classList.add(newTheme + '-mode');
+                    
+                    // Update button text
+                    themeToggle.innerHTML = `
+                        <i class="bi ${newTheme === 'dark' ? 'bi-moon-stars' : 'bi-brightness-high'}"></i>
+                        ${newTheme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+                    `;
+                    
+                    // Save theme preference
+                    localStorage.setItem('theme', newTheme);
+                });
+            });
+        </script>
+        <script>
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const username = localStorage.getItem('username');
+            const userNameElement = document.getElementById('userName');
+
+            if (isLoggedIn) {
+                // Show profile menu with username
+                userNameElement.textContent = username;
+            } else {
+                // If not logged in, redirect to login page
+                window.location.href = 'giriş.html';
+            }
+
+            // Handle logout
+            document.querySelectorAll('[href="giriş.html"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('adminUsername');
+                    window.location.href = 'giriş.html';
+                });
+            });
+
+            window.addEventListener('load', function () {
+                const loadingScreen = document.getElementById('loading-screen');
+                if (loadingScreen) {
+                    loadingScreen.style.display = 'none';
+                }
+            });
+        </script>
+        <script>
+            window.addEventListener("DOMContentLoaded", function () {
+                const kayitliUrunler = JSON.parse(localStorage.getItem("urunler")) || [];
+                const container = document.querySelector(".row-cols-xl-4");
+        
+                kayitliUrunler.forEach(item => {
+                    const col = document.createElement("div");
+                    col.className = "col mb-5";
+                    col.innerHTML = `
+                        <div class="card h-100">
+                            <img class="card-img-top" src="${item.resim}" alt="${item.ad}" />
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <h5 class="fw-bolder">${item.ad}</h5>
+                                    $${item.fiyat.toFixed(2)}
+                                </div>
+                            </div>
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center">
+                                    <a class="btn btn-outline-dark mt-auto add-to-cart" href="#" data-name="${item.ad}" data-price="${item.fiyat}">Add to cart</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(col);
+        
+                    col.querySelector('.add-to-cart').addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const name = this.dataset.name;
+                        const price = parseFloat(this.dataset.price);
+                        cart.push({ name, price });
+                        updateCart();
+                    });
+                });
+            });
+        </script>
+        
+    </body>
+</html>
