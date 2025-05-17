@@ -5,6 +5,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(cors());
 app.use(express.static(__dirname));
 
 // Dosya yolları
@@ -135,7 +136,8 @@ app.post('/api/cart', (req, res) => {
 });
 
 // Start server
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
