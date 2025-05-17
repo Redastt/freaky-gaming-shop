@@ -1,0 +1,28 @@
+
+
+Sunucuyu başlatmak için:
+server.js dosyasının bulunduğu klasöre gidin
+Terminal'i açın
+node server.js komutunu yazın
+Sunucunun durumunu kontrol etmek için:
+Tarayıcınızda http://localhost:3000 adresine gidin
+Eğer sayfa yüklenirse sunucu çalışıyor demektir
+Sunucuyu durdurmak için:
+Terminal'de Ctrl+C tuşlarına basın
+Ya da yeni bir terminal açın ve şu komutu yazın:
+bash
+CopyInsert in Terminal
+taskkill /F /IM node.exe
+Sunucunun çalışırken göstereceği çıktı:
+CopyInsert
+Server running on port 3000
+Eğer sunucu çalışmıyorsa, şu adımları deneyin:
+
+server.js dosyasının doğru çalıştığından emin olun
+Node.js'in doğru yüklü olduğundan emin olun
+npm install express komutunu çalıştırın
+Sunucunun çalıştığı klasörde data klasörü ve içindeki products.json, cart.json, accounts.json dosyalarının mevcut olduğundan emin olun
+Şu anda sunucu çalışıyor
+
+http://localhost:3000/index.html
+
