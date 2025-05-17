@@ -12,5 +12,12 @@
     "password": "test3",
     "email": "test3@gmail.com",
     "createdAt": "2025-05-17T08:27:07.534Z"
+  },
+  {
+    "id": "1747480898323",
+    "username": "deneme",
+    "password": "deneme",
+    "email": "deneme@gmail.com",
+    "createdAt": "2025-05-17T11:21:38.323Z"
   }
 ]

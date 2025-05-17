@@ -180,98 +180,104 @@
         <script src="js/scripts.js"></script>
         <script>
             // Function to load products from localStorage
-            function loadProducts() {
-                const products = JSON.parse(localStorage.getItem('products')) || [];
-                const productList = document.getElementById('productList');
-                productList.innerHTML = '';
+            fetch('/api/products')
+                .then(response => response.json())
+                .then(data => {
+                    const products = data;
+                    const productList = document.getElementById('productList');
+                    productList.innerHTML = '';
 
-                products.forEach(product => {
-                    const productCard = document.createElement('div');
-                    productCard.className = 'col mb-5';
-                    productCard.setAttribute('data-product-id', product.id);
-                    productCard.innerHTML = `
-                        <div class="card h-100">
-                            <!-- Product image-->
-                            <img class="card-img-top" src="${product.image}" alt="${product.name}" />
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">${product.name}</h5>
-                                    <!-- Product price-->
-                                    <p class="price-tag">${product.price} ₺</p>
+                    products.forEach(product => {
+                        const productCard = document.createElement('div');
+                        productCard.className = 'col mb-5';
+                        productCard.setAttribute('data-product-id', product.id);
+                        productCard.innerHTML = `
+                            <div class="card h-100">
+                                <!-- Product image-->
+                                <img class="card-img-top" src="${product.image}" alt="${product.name}" />
+                                <!-- Product details-->
+                                <div class="card-body p-4">
+                                    <div class="text-center">
+                                        <!-- Product name-->
+                                        <h5 class="fw-bolder">${product.name}</h5>
+                                        <!-- Product price-->
+                                        <p class="price-tag">${product.price} ₺</p>
+                                    </div>
+                                </div>
+                                <!-- Product actions-->
+                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a class="btn btn-outline-dark" href="eşya görüntüleme.html?id=${product.id}">Detaylar</a>
+                                        <button class="btn btn-primary" data-product-id="${product.id}">
+                        `;
+                        productCard.innerHTML = `
+                            <div class="card h-100">
+                                <!-- Product image-->
+                                <img class="card-img-top" src="${product.image}" alt="${product.name}" />
+                                <!-- Product details-->
+                                <div class="card-body p-4">
+                                    <div class="text-center">
+                                        <!-- Product name-->
+                                        <h5 class="fw-bolder">${product.name}</h5>
+                                        <!-- Product price-->
+                                        <p class="price-tag">${product.price} ₺</p>
+                                    </div>
+                                </div>
+                                <!-- Product actions-->
+                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a class="btn btn-outline-dark" href="eşya görüntüleme.html?id=${product.id}">Detaylar</a>
+                                        <button class="btn btn-primary" onclick="addToCart('${product.id}')">
+                                            <i class="fas fa-cart-plus me-1"></i>Sepete Ekle
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="d-flex justify-content-center gap-2">
-                                    <a class="btn btn-outline-dark" href="eşya görüntüleme.html?id=${product.id}">Detaylar</a>
-                                    <button class="btn btn-primary" data-product-id="${product.id}">
-                    `;
-                    productCard.innerHTML = `
-                        <div class="card h-100">
-                            <!-- Product image-->
-                            <img class="card-img-top" src="${product.image}" alt="${product.name}" />
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">${product.name}</h5>
-                                    <!-- Product price-->
-                                    <p class="price-tag">${product.price} ₺</p>
-                                </div>
-                            </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="d-flex justify-content-center gap-2">
-                                    <a class="btn btn-outline-dark" href="eşya görüntüleme.html?id=${product.id}">Detaylar</a>
-                                    <button class="btn btn-primary" onclick="addToCart('${product.id}')">
-                                        <i class="fas fa-cart-plus me-1"></i>Sepete Ekle
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    productList.appendChild(productCard);
+                        `;
+                        productList.appendChild(productCard);
+                    });
                 });
-            }
 
             // Cart functions
             function addToCart(productId) {
                 try {
                     // Get products from localStorage
-                    const products = JSON.parse(localStorage.getItem('products')) || [];
-                    const product = products.find(p => p.id === productId);
+                    fetch('/api/products')
+                        .then(response => response.json())
+                        .then(data => {
+                            const products = data;
+                            const product = products.find(p => p.id === productId);
 
-                    if (!product) {
-                        throw new Error('Ürün bulunamadı!');
-                    }
+                            if (!product) {
+                                throw new Error('Ürün bulunamadı!');
+                            }
 
-                    // Get cart from localStorage
-                    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                            // Get cart from localStorage
+                            let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-                    // Check if item already exists in cart
-                    const existingItem = cart.find(item => item.id === productId);
-                    if (existingItem) {
-                        existingItem.quantity += 1;
-                    } else {
-                        cart.push({
-                            id: productId,
-                            name: product.name,
-                            price: product.price,
-                            image: product.image,
-                            quantity: 1
+                            // Check if item already exists in cart
+                            const existingItem = cart.find(item => item.id === productId);
+                            if (existingItem) {
+                                existingItem.quantity += 1;
+                            } else {
+                                cart.push({
+                                    id: productId,
+                                    name: product.name,
+                                    price: product.price,
+                                    image: product.image,
+                                    quantity: 1
+                                });
+                            }
+
+                            // Save cart to localStorage
+                            localStorage.setItem('cart', JSON.stringify(cart));
+
+                            // Update cart count
+                            updateCartCount();
+
+                            // Show success message
+                            alert('Ürün başarıyla sepete eklendi!');
                         });
-                    }
-
-                    // Save cart to localStorage
-                    localStorage.setItem('cart', JSON.stringify(cart));
-
-                    // Update cart count
-                    updateCartCount();
-
-                    // Show success message
-                    alert('Ürün başarıyla sepete eklendi!');
                 } catch (error) {
                     console.error('Sepete ekleme hatası:', error);
                     alert('Bir hata oluştu: ' + error.message);

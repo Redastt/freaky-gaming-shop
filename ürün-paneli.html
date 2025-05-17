@@ -65,8 +65,9 @@
         }
 
         // Function to generate new product ID
-        function generateProductId() {
-            const products = JSON.parse(localStorage.getItem('products')) || [];
+        async function generateProductId() {
+            const response = await fetch('/api/products', {});
+            const products = await response.json();
             const lastProduct = products[products.length - 1];
             return lastProduct ? (parseInt(lastProduct.id) + 1).toString() : '1';
         }
